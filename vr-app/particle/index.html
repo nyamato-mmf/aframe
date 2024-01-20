@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>パーティクルの基本</title>
+  <script src="aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.min.js"></script>
+</head>
+<body>
+<a-scene>
+  <a-cylinder position="0 0 -3" radius="1" height="1" color="#7BC8A4"></a-cylinder>
+  <a-sky color="#333333"></a-sky>
+  <!-- パーティクル -->
+  <a-entity position="0 0.5 -3"
+    particle-system="preset: default;
+      size: 0.2;
+      maxAge: 1.5;
+      color: #FF0000,#00FF00,#0000FF;
+      velocityValue: 0 15 0;">
+  </a-entity>
+</a-scene>
+</body>
+</html>

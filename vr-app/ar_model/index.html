@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ARでOBJ形式のモデルを表示</title>
+  <script src="aframe.min.js"></script>
+  <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.6.2/aframe/build/aframe-ar.js"></script>
+</head>
+<!-- <body style="margin: 0px; overflow: hidden;"> -->
+<body>
+<a-scene embedded arjs="debugUIEnabled:false;" vr-mode-ui="enabled: false">
+  <a-assets>
+    <a-asset-item id="obj" src="huchan.obj"></a-asset-item>
+    <a-asset-item id="mtl" src="huchan.mtl"></a-asset-item>
+  </a-assets>
+  <a-marker preset="hiro">
+    <a-box position="0 0.5 0" wireframe="true"></a-box>
+  </a-marker>
+  <a-marker preset="kanji">
+    <a-obj-model src="#obj" mtl="#mtl" position="0 0 0"></a-obj-model>
+  </a-marker>
+  <a-entity camera></a-camera>
+</a-scene>
+</body>
+</html>

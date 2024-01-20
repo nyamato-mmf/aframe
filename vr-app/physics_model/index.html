@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>物理シミュレーション</title>
+  <script src="aframe.min.js"></script>
+  <!-- <script src="//cdn.rawgit.com/donmccurdy/aframe-physics-system/v3.3.0/dist/aframe-physics-system.min.js"></script> -->
+  <script src="aframe-physics-system.min.js"></script>
+</head>
+<body>
+<a-scene physics="debug: true">
+  <!-- 床（static-body） -->
+  <a-plane static-body
+    position="0 0 -4"
+    rotation="-90 0 0"
+    width="4"
+    height="4"
+    color="#7BC8A4">
+  </a-plane>
+  <!-- 箱（static-body） -->
+  <!-- <a-box static-body
+    position="-0.3 0.5 -4"
+    color="#4CC3D9">
+  </a-box> -->
+  <!-- 球（dynamic-body） -->
+  <a-sphere dynamic-body
+    position="0.5 5 -4"
+    radius="0.5"
+    color="#EF2D5E">
+  </a-sphere>
+  <a-assets>
+    <a-asset-item id="obj" src="huchan.obj"></a-asset-item>
+    <a-asset-item id="mtl" src="huchan.mtl"></a-asset-item>
+  </a-assets>
+  <a-obj-model dynamic-body src="#obj" mtl="#mtl" position="0 10 -4"></a-obj-model>
+  <a-sky color="#333333"></a-sky>
+</a-scene>
+</body>
+</html>

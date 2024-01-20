@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Oculus Go シューティング</title>
+  <script src="aframe.min.js"></script>
+  <script src="aframe-physics-system.min.js"></script>
+  <script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.min.js"></script>
+</head>
+<body>
+
+<!-- シーンに物理シミュレーションを適用 -->
+<a-scene physics>
+  <a-assets>
+    <!-- 効果音を読み込んでおく -->
+    <audio id="shot" src="shot.mp3"></audio>
+    <audio id="struck" src="struck.mp3"></audio>
+    <audio id="clear" src="clear.mp3"></audio>
+    <audio id="gong" src="gong.mp3"></audio>
+  </a-assets>
+  <a-camera id="cam">
+    <!-- スコア表示用の a-text をカメラの子要素として入れ子にする -->
+    <a-text id="txt" value="score" position="-0.5 -0.5 -1" color="#000000"></a-text>
+  </a-camera>
+  <!-- Oculus Go のコントローラ -->
+  <a-entity id="ctl" oculus-go-controls></a-entity>
+  <!-- <a-entity id="ctl" laser-controls="model:false" line="opacity:0"></a-entity> -->
+  <!-- 床（静的な剛体） -->
+  <a-plane static-body position="0 0 0" rotation="-90 0 0" width="30" height="30" color="#7BC8A4"></a-plane>
+  <!-- そら -->
+  <a-sky color="#333333"></a-sky>
+</a-scene>
+
+<script>
+
+const scene = document.querySelector("a-scene");      // シーンを取得しておく
+const cam = document.getElementById("cam");
+
+// 弾の速度の設定と、弾の生成・発射
+let bullets = 20;                                     // 弾の数
+const ctl = document.getElementById("ctl");           // コントローラを取得
+ctl.addEventListener("triggerdown", (e) => {          // トリガーが押されたら
+  // 弾を飛ばす方向を決める
+  const point = new THREE.Vector3(0, 0, -1);          // 基準点（正面）
+  // コントローラが向いた方向に飛ばす場合の2行
+  ctl.object3D.localToWorld(point);                   // コントローラの座標変換
+  const direction = point.sub(ctl.object3D.position); // コントローラの向き取得
+  // 頭が向いている方向に飛ばす場合の2行
+  // cam.object3D.localToWorld(point);                   // カメラの座標変換
+  // const direction = point.sub(cam.object3D.position); // カメラの向き取得
+  // 弾の速度を決める
+  const speed = 20;       // 弾のスピード
+  direction.x *= speed;   // 弾の x 方向の速度
+  direction.y *= speed;   // 弾の y 方向の速度
+  direction.z *= speed;   // 弾の z 方向の速度
+  // 弾を作って飛ばす
+  const bullet = document.createElement("a-sphere");  // 弾（球）の生成
+  bullet.setAttribute("id", "bullet");                // id を設定
+  bullet.setAttribute("dynamic-body", "mass: 10");    // 動的な剛体にする
+  bullet.setAttribute("position", "0 1.2 0");         // 初期位置
+  bullet.setAttribute("radius", "0.3");               // 半径
+  bullet.setAttribute("color", "#FF0000");            // 色
+  scene.appendChild(bullet);                          // シーンに弾を追加
+  bullet.setAttribute("velocity", direction);         // 速度を設定（発射）
+  document.getElementById("shot").play();             // 撃つ音を鳴らす
+  bullets--;                                          // 弾の数を減らす
+});
+
+// 標的の生成とパーティクルの設定
+const targetNum = 5;                                  // 標的の数
+let targets = [];                                     // 標的を入れる配列変数
+for (let i = 0; i < targetNum; i++) {                 // 標的の数だけ
+  // 標的の生成
+  targets[i] = document.createElement("a-cylinder");  // a-cylinder を作る
+  targets[i].setAttribute("dynamic-body", "mass: 5"); // 動的な剛体とし、質量を設定
+  const posX = Math.random() * 20 - 10;               // X位置をランダムに決める
+  const posZ = Math.random() * 20 - 10;               // Y位置をランダムに決める
+  const pos = posX + " 1 " + posZ;                    // 標的の位置を決定
+  targets[i].setAttribute("position", pos);           // 位置を設定
+  targets[i].setAttribute("radius", "0.5");           // 半径を設定
+  targets[i].setAttribute("height", "1.5");           // 高さを設定
+  targets[i].setAttribute("color", "#FFC65D");        // 色を設定
+  scene.appendChild(targets[i]);                      // シーンに標的を追加
+  // 衝突時のパーティクルの設定
+  targets[i].addEventListener("collide", (e) => {     // 標的に何か衝突したら
+    const collided = e.detail.body.el;                // 衝突相手を取得
+    if (collided.id == "bullet") {                    // 衝突相手が弾なら
+      const ptc = document.createElement("a-entity"); // パーティクルを生成
+      ptc.setAttribute("particle-system",             // パーティクルの諸設定
+        "size: 1; duration: 0.3; particleCount: 20; velocityValue: 1 5 1; color: #FFFF00,#FFA500");
+      const bpos = collided.getAttribute("position"); // 弾の位置を取得
+      ptc.setAttribute("position", bpos);             // パーティクルの位置を設定
+      scene.appendChild(ptc);                         // シーンにパーティクルを追加
+      document.getElementById("struck").play();       // 衝突音を鳴らす
+    }
+  });
+}
+
+// タイマーによる標的の状態の取得と、ゲーム終了判定
+const timer = setInterval(() => {                     // タイマー開始
+  // 残りの標的数の表示
+  let left = 0;                                       // 残りの標的数を0に
+  for (let i = 0; i < targetNum; i++) {               // 標的の数だけ
+    const tpos = targets[i].getAttribute("position"); // 標的の位置を取得
+    if (tpos.y >= 0) {                                // 標的が床の上なら
+      left++;                                         // 残りの数を増やす
+    }
+  }
+  // 終了判定
+  const txt = document.getElementById("txt");         // a-textの取得
+  txt.setAttribute("value", bullets);                 // 弾の数を表示
+  // クリア
+  if (left == 0) {                                    // 残りの標的が0なら
+    clearInterval(timer);                             // タイマーを止める
+    txt.setAttribute("value", "CLEAR: " + bullets);   // クリア・残弾表示
+    document.getElementById("clear").play();          // クリア音を鳴らす
+  }
+  // 失敗（弾切れ）
+  if (bullets == 0) {                                 // 弾の数が0なら
+    clearInterval(timer);                             // タイマーを止める
+    txt.setAttribute("value", "FAILED");              // 失敗表示
+    document.getElementById("gong").play();           // 失敗の音を鳴らす
+  }
+}, 100);                                      // 以上を100msごとに繰り返す
+
+</script>
+</body>
+</html>

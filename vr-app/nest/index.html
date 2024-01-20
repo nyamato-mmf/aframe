@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>オブジェクトを入れ子にする</title>
+  <script src="https://aframe.io/releases/0.9.1/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-event-set-component@4.2.1/dist/aframe-event-set-component.min.js"></script>
+</head>
+<body>
+  <a-scene>
+    <a-assets>
+      <img id="boxTexture" src="solar-panel.jpg">
+      <img id="sphereTexture" src="earth.jpg">
+      <img id="skyTexture" src="milkyway.jpg">
+    </a-assets>
+    <a-camera>
+      <a-cursor fuse="true" fuse-timeout="1000"></a-cursor>
+    </a-camera>
+
+    <a-sphere
+      position="0 1.25 -5"
+      radius="1.25"
+      src="#sphereTexture"
+      color="#333333"
+      animation="property: rotation;
+        to: 0 360 0;
+        loop: true;
+        dur: 30000;
+        easing: linear;"
+      animation__enter="startEvents: mouseenter;
+        property: material.color;
+        to: #FFFFFF;
+        dur: 500;
+        easing: linear;"
+      animation__leave="startEvents: mouseleave;
+        property: material.color;
+        to: #333333;
+        dur: 500;
+        easing: linear;">
+
+        <a-box
+          position="-3 0.5 0"
+          rotation="0 45 0"
+          scale="0.5 0.5 0.5"
+          src="#boxTexture"
+          animation="property: position;
+            from: -3 -0.5 0;
+            to: -3 0.5 0;
+            dir: alternate;
+            loop: true;
+            dur: 2000;
+            easing: easeInOutQuad;"
+          event-set__enter="_event: mouseenter;
+            scale: 0.7 0.7 0.7;"
+          event-set__click="_event: click;
+            material.color: #FF0000;"
+          event-set__leave="_event: mouseleave;
+            scale: 0.5 0.5 0.5; material.color: #FFFFFF;">
+        </a-box>
+
+      </a-sphere>
+    <a-sky
+      src="#skyTexture">
+    </a-sky>
+  </a-scene>
+</body>
+</html>

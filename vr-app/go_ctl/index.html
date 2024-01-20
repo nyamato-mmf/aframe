@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ハンドコントローラを使う①：各種イベントの取得</title>
+  <script src="aframe.min.js"></script>
+</head>
+<body>
+<a-scene>
+  <a-entity id="ctl" laser-controls></a-entity>
+  <a-box id="box" position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
+  <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
+  <a-sky color="#333333"></a-sky>
+  <a-text id="txt" value="Event" position="0 2 -2" align="center"></a-text>
+</a-scene>
+
+<!-- コントローラによる各種イベントの処理 -->
+<script>
+
+// レーザーポインタをマウスのように使う（トリガーボタン＝マウスの左ボタン）
+const box = document.getElementById("box");   // a-box 要素を取得
+box.addEventListener("mouseenter", (e) => {   // box に mouseenter イベントが起きたら
+  box.setAttribute("scale", "1.2 1.2 1.2");   // box の scale を大きくする
+});
+box.addEventListener("mouseleave", (e) => {   // box に mouseleave イベントが起きたら
+  box.setAttribute("scale", "1 1 1");         // box の scale をもとに戻す
+});
+box.addEventListener("mousedown", (e) => {    // box に mousedown イベントが起きたら
+  box.setAttribute("color", "#FF0000");       // box の 色を赤にする
+});
+box.addEventListener("mouseup", (e) => {      // box に mouseup イベントが起きたら
+  box.setAttribute("color", "#4CC3D9");       // box の 色をもとに戻す
+});
+
+// コントローラ自体のイベント
+const ctl = document.getElementById("ctl");   // laser-controls 要素を取得
+const txt = document.getElementById("txt");   // a-text 要素を取得
+// トリガーボタンを押した時のイベント
+ctl.addEventListener("triggerdown", (e) => {  // ctl に triggerdown イベントが起きたら
+  // const ray = ctl.getAttribute("raycaster");
+  // txt.setAttribute("value", JSON.stringify(ray.direction));  // txt に表示
+  txt.setAttribute("value", "Trigger Down");  // txt に表示
+});
+ctl.addEventListener("triggerup", (e) => {    // ctl に triggerup イベントが起きたら
+  txt.setAttribute("value", "Trigger Up");    // txt に表示
+});
+// トラックパッドを押した時のイベント
+ctl.addEventListener("trackpaddown", (e) => { // ctl に trackpaddown イベントが起きたら
+  txt.setAttribute("value", "Trackpad Down"); // txt に表示
+});
+ctl.addEventListener("trackpadup", (e) => {   // ctl に trackpadup イベントが起きたら
+  txt.setAttribute("value", "Trackpad Up");   // txt に表示
+});
+// トラックパッドに触れた時のイベント
+ctl.addEventListener("trackpadtouchstart", (e) => { // トラックパッドに触れたら
+  txt.setAttribute("value", "Trackpad Touched");
+});
+ctl.addEventListener("trackpadtouchend", (e) => {   // トラックパッドから話したら
+  txt.setAttribute("value", "Trackpad Released");
+});
+// 仕様上、以下により座標値が取得できるはずだが、実際には取得できない
+// ctl.addEventListener("trackpadchanged", (e) => { // トラックパッド上で指を動かしたら
+//   txt.setAttribute("value", JSON.stringify(e.detail)); // トラックパッド上の指の位置を取得
+// });
+
+</script>
+</body>
+</html>

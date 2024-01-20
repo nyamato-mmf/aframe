@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>OBJ形式の3DCGモデルを使う</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+</head>
+
+<body>
+  <a-scene>
+    <a-assets>
+      <a-asset-item id="obj" src="huchan.obj"></a-asset-item>
+      <a-asset-item id="mtl" src="huchan.mtl"></a-asset-item>
+    </a-assets>
+    <a-obj-model src="#obj" mtl="#mtl" position="0 0 -3"></a-obj-model>
+    <a-sky color="#333C5E"></a-sky>
+  </a-scene>
+</body>
+
+</html>

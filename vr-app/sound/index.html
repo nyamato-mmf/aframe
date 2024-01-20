@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>音を鳴らす</title>
+  <script src="https://aframe.io/releases/0.9.1/aframe.min.js"></script>
+</head>
+<body>
+  <a-scene>
+
+    <a-assets>
+      <audio id="bgm" src="bgm.mp3"></audio>
+      <audio id="sound1" src="sound1.mp3"></audio>
+      <audio id="sound2" src="sound2.mp3"></audio>
+    </a-assets>
+
+    <a-sound src="#bgm"
+      autoplay="true" loop="true" position="3 1 0">
+    </a-sound>
+
+    <a-box id="box" position="-1 1 -3" color="#4CC3D9"
+      sound="src: #sound1; on: mouseenter;">
+    </a-box>
+
+    <a-box id="box" position="1 1 -3" color="#EF2D5E"
+      sound="src: #sound1; on: mouseenter;"
+      sound__click="src: #sound2; on: click;">
+    </a-box>
+
+    <a-camera>
+      <a-cursor fuse="true" fuse-timeout="1000"></a-cursor>
+    </a-camera>
+
+  </a-scene>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>JavaScriptでコントロール</title>
+  <script src="https://aframe.io/releases/0.9.1/aframe.min.js"></script>
+</head>
+<body>
+<!-- ここから A-Frame -->
+<a-scene>
+  <a-assets>
+    <img id="boxTexture" src="solar-panel.jpg">
+    <img id="sphereTexture" src="earth.jpg">
+    <img id="skyTexture" src="milkyway.jpg">
+    <audio id="se" src="se.mp3"></audio>
+  </a-assets>
+  <a-camera>
+    <a-cursor fuse="true" fuse-timeout="1000"></a-cursor>
+  </a-camera>
+  <a-box
+    id="box"
+    position="-1 0.5 -3"
+    rotation="0 45 0"
+    src="#boxTexture">
+  </a-box>
+  <a-sphere
+    id="sphere"
+    position="0 1.25 -5"
+    radius="1.25"
+    src="#sphereTexture"
+    animation="property: rotation;
+    to: 0 360 0;
+    loop: true;
+    dur: 30000;
+    easing: linear;">
+  </a-sphere>
+  <a-sky
+    src="#skyTexture">
+  </a-sky>
+</a-scene>
+<!-- ここまで A-Frame -->
+
+<!-- ここから JavaScript -->
+<script>
+
+// <a-box> の属性を操作
+const box = document.getElementById("box");     // <a-box> を取得
+// box に mouseenter イベントが起き時の処理
+box.addEventListener("mouseenter", (e) => {
+  box.setAttribute("scale", "1.1 1.1 1.1");     // 大きくする
+});
+// box に click イベントが起き時の処理
+box.addEventListener("click", (e) => {
+  box.setAttribute("color", "#FF0000");         // 赤にする
+});
+// box に mouseleave イベントが起き時の処理
+box.addEventListener("mouseleave", (e) => {
+  box.setAttribute("scale", "1 1 1");           // 大きさを戻す
+  box.setAttribute("color", "#FFFFFF");         // 白にする
+});
+
+// <a-sphere> の属性操作・取得と、音声の再生
+const sphere = document.getElementById("sphere"); // <a-sphere> を取得
+// sphere に click イベントが起き時の処理
+sphere.addEventListener("click", (e) => {
+  sphere.setAttribute("src", "#skyTexture");    // テクスチャ空と同じに
+  const se = document.getElementById("se");     // <audio>を取得
+  se.play();                                    // 音を鳴らす
+  const rot = sphere.getAttribute("rotation");  // "rotation"の値を取得
+  console.log(rot);                             // その値をコンソールに表示
+  console.log(rot.y);                           // その値のYをコンソールに表示
+});
+// sphere に mouseleave イベントが起き時の処理
+sphere.addEventListener("mouseleave", (e) => {
+  sphere.setAttribute("src", "#sphereTexture"); // テクスチャをもとに戻す
+});
+</script>
+<!-- ここまで JavaScript -->
+
+</body>
+</html>

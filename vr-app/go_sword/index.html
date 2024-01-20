@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Oculus Go ソードアクション</title>
+  <script src="aframe.min.js"></script>
+  <script src="aframe-physics-system.min.js"></script>
+  <script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.min.js"></script>
+</head>
+<body>
+
+<!-- <a-scene physics="debug: true"> -->
+<a-scene physics>
+  <a-assets>
+    <!-- 効果音を読み込んでおく -->
+    <audio id="shot" src="shot.mp3"></audio>
+    <audio id="struck" src="struck.mp3"></audio>
+  </a-assets>
+  <!-- カメラ -->
+  <a-camera id="cam">
+    <!-- 剣 -->
+    <a-entity id="sword" position="0 -1 -0.5">
+      <!-- 刃（静的な剛体として） -->
+      <a-cylinder id="blade" static-body position="0 1.5 0" radius="0.02" height="2" color="#EF2D5E"></a-cylinder>
+      <!-- 柄 -->
+      <a-cylinder position="0 0.5 0" radius="0.04" height="0.02" color="#DCDCDC"></a-cylinder>
+      <a-cylinder position="0 0.4 0" radius="0.03" height="0.35" color="#DCDCDC"></a-cylinder>
+    </a-entity>
+    <!-- スコア表示用の a-text をカメラの子要素として入れ子にする -->
+    <a-text id="txt" value="score" position="-1 -1 -2" color="#000000"></a-text>
+  </a-camera>
+  <!-- Oculus Go のコントローラ（コントローラの CG とレーザーを非表示） -->
+  <a-entity oculus-go-controls="model:false" id="ctl"></a-entity>
+  <!-- <a-entity laser-controls="model:false" line="opacity:0" id="ctl"></a-entity> -->
+  <a-sky color="#333333"></a-sky>
+</a-scene>
+
+<script>
+
+let bullets = 20;                                     // 弾の数
+let hits = 0;                                         // ヒット数
+const ctl = document.getElementById("ctl");           // コントローラを取得
+
+// 弾の生成・発射と剣との衝突判定
+ctl.addEventListener("triggerdown", () => {           // トリガーが押されたら
+  if (bullets == 0) { return; }                       // 残弾0なら抜ける
+  // 弾の生成と発射
+  const bullet = document.createElement("a-sphere");  // 弾（球）の生成
+  bullet.setAttribute("id", "bullet");                // id を設定
+  bullet.setAttribute("dynamic-body", "mass: 5");     // 動的な剛体にする
+  bullet.setAttribute("position", "0 0 -30");         // 初期位置
+  bullet.setAttribute("radius", "0.3");               // 半径
+  bullet.setAttribute("color", "#FF0000");            // 色
+  const scene = document.querySelector("a-scene");    // シーンを取得
+  scene.appendChild(bullet);                          // シーンに弾を追加
+  const v = {x:0, y:0, z:0};                          // 弾の速度変数の定義
+  v.x = Math.random() * 2.4 - 1.2;                    // 弾の速度x（ランダム化）
+  v.y = Math.random() * 1.5 + 5;                      // 弾の速度y（ランダム化）
+  v.z = Math.random() * 30 + 30;                      // 弾の速度z（ランダム化）
+  bullet.setAttribute("velocity", v);                 // 速度を設定（発射）
+  document.getElementById("shot").play();             // 撃つ音を鳴らす
+  // 弾と剣との衝突判定
+  bullet.addEventListener("collide", (e) => {         // 弾に何か衝突したら
+    const collided = e.detail.body.el;                // 衝突相手を取得
+    if (collided.id == "blade") {                     // 相手が刃なら
+      const ptc = document.createElement("a-entity"); // パーティクルの生成
+      ptc.setAttribute("particle-system",             // パーティクルの諸設定
+        "size: 1; duration: 0.3; particleCount: 20; velocityValue: 1 5 -5; color: #FFFF00,#FFA500");
+      const bpos = bullet.getAttribute("position");   // 弾の位置を取得
+      ptc.setAttribute("position", bpos);             // パーティクルの位置設定
+      scene.appendChild(ptc);                         // パーティクルを追加
+      document.getElementById("struck").play();       // 衝突音を鳴らす
+      hits++;                                         // ヒット数を増やす
+    }
+  });
+  bullets--;                                          // 残弾数を減らす
+});
+
+// レンダリングループ（剣の描画とスコア）の定義
+const render = (t) => {
+  requestAnimationFrame(render);                      // ループさせる
+  // 剣の描画（コントローラによる回転）
+  const cam = document.getElementById("cam");         // カメラを取得
+  const sword = document.getElementById("sword");     // 剣を取得
+  sword.object3D.rotation.x = ctl.object3D.rotation.x - 1;  // 剣の回転x
+  sword.object3D.rotation.x -= cam.object3D.rotation.x;     // 剣の回転x補正
+  sword.object3D.rotation.z = ctl.object3D.rotation.y;      // 剣の回転z
+  sword.object3D.rotation.z -= cam.object3D.rotation.y;     // 剣の回転z補正
+  const txt = document.getElementById("txt");         // a-text を取得
+  txt.setAttribute("value", "Bul:" + bullets + "  Hit:" + hits);  // スコア表示
+};
+render();                                             // ループ開始
+
+</script>
+</body>
+</html>

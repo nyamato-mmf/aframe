@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>WebVRアプリをページに埋め込む</title>
+  <script src="aframe.min.js"></script>
+</head>
+<body>
+
+<h1>VRアプリを埋め込んだ例</h1>
+<p>A-Frameで作ったアプリは、Webページの中に埋め込んで置くことができます。</p>
+
+<h2>埋め込み方法1</h2>
+<p>divタグの中に、helloアプリの内容をそのまま書き込んだ例です。</p>
+<div style="width:320px; height:200px;">
+<a-scene embedded>
+  <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
+  <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
+  <a-sky color="#ECECEC"></a-sky>
+</a-scene>      
+</div>
+
+<h2>埋め込み方法2</h2>
+<p>iframeタグで、アプリへのリンクとしてgazeアプリを埋め込んだ例です。</p>
+<iframe src="../gaze/"
+  allowfullscreen="yes" allowvr="yes"
+  style="width:320px; height:200px; border:none;">
+</iframe>
+
+</body>
+</html>

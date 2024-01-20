@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Oculus Go 脱出ゲーム</title>
+  <script src="aframe.min.js"></script>
+  <script src="aframe-physics-system.min.js"></script>
+  <script src="aframe-extras.min.js"></script>
+</head>
+<body>
+
+<a-scene physics>
+  <!-- プレイヤー -->
+  <a-entity id="player" movement-controls kinematic-body>
+    <a-camera position="0 1.6 0">
+      <!-- 時間と、とったアイテムの表示 -->
+      <a-text id="txtTime" position="-0.5 0.2 -1" value="time" color="#000000"></a-text>
+      <a-text id="txtItem" position="0.1 0.2 -1" value="item" color="#000000"></a-text>
+    </a-camera>
+    <a-entity laser-controls id="ctl"></a-entity> <!-- コントローラ -->
+  </a-entity>
+  <!-- 床 -->
+  <a-plane static-body rotation="-90 0 0" width="30" height="30" color="#7BC8A4"></a-plane>
+  <!-- 四方の壁 -->
+  <a-box static-body scale="1 5 30" position="-14.5 2.5 0" color="#A9A9A9"></a-box>
+  <a-box static-body scale="1 5 25" position="14.5 2.5 2.5" color="#A9A9A9"></a-box>
+  <a-box static-body scale="30 5 1" position="0 2.5 -14.5" color="#A9A9A9"></a-box>
+  <a-box static-body scale="30 5 1" position="0 2.5 14.5" color="#A9A9A9"></a-box>
+  <!-- その他の壁たち -->
+  <a-box static-body scale="8 5 4" position="-6 2.5 -8" color="#A9A9A9"></a-box>
+  <a-box static-body scale="12 5 4" position="8 2.5 -8" color="#A9A9A9"></a-box>
+  <a-box static-body scale="4 5 8" position="-12 2.5 -2" color="#A9A9A9"></a-box>
+  <a-box static-body scale="4 5 8" position="-4 2.5 2" color="#A9A9A9"></a-box>
+  <a-box static-body scale="4 5 8" position="0 2.5 6" color="#A9A9A9"></a-box>
+  <a-box static-body scale="8 5 4" position="6 2.5 0" color="#A9A9A9"></a-box>
+  <a-box static-body scale="4 5 8" position="8 2.5 6" color="#A9A9A9"></a-box>
+  <a-box static-body scale="4 5 8" position="-8 2.5 10" color="#A9A9A9"></a-box>
+  <!-- 出口の扉 -->
+  <a-box id="door" static-body scale="1 5 4" position="14.5 2.5 -12" color="#006400"></a-box>
+  <!-- アイテム -->
+  <!-- ボール -->
+  <a-sphere id="ball" position="-12 1 -8" radius="0.5" color="#FF69B4"
+    animation="property:rotation; to:0 360 0; dur:5000; loop:true; easing:linear"
+    animation__enter="startEvents: mouseenter; property: scale; to: 1.2 1.2 1.2"
+    animation__leave="startEvents: mouseleave; property: scale; to: 1 1 1">
+  </a-sphere>
+  <!-- ストーン -->
+  <a-octahedron id="stone" position="4 1 4" radius="0.5" color="#00FF7F"
+    animation="property:rotation; to:0 360 0; dur:5000; loop:true; easing:linear"
+    animation__enter="startEvents:mouseenter; property:scale; to:1.2 1.2 1.2"
+    animation__leave="startEvents:mouseleave; property:scale; to:1 1 1">
+  </a-octahedron>
+  <!-- キー -->
+  <a-entity id="key" position="-4 1 8" rotation="0 0 20"
+    animation="property:rotation; to:0 360 0; dur:5000; loop:true; easing:linear"
+    animation__enter="startEvents:mouseenter; property:scale; to:1.2 1.2 1.2"
+    animation__leave="startEvents:mouseleave; property:scale; to:1 1 1">
+    <a-cylinder position="0 0 0" radius="0.08" height="1" color="#B8860B"></a-cylinder>
+    <a-torus position="0 0.6 0" radius="0.2" radius-tubular="0.05" color="#B8860B"></a-torus>
+    <a-box position="-0.12 -0.2 0" scale="0.1 0.1 0.1" color="#B8860B"></a-box>
+    <a-box position="-0.12 -0.4 0" scale="0.1 0.1 0.1" color="#B8860B"></a-box>
+  </a-entity>
+  <!-- 効果音 -->
+  <a-assets>
+    <audio id="get" src="get.mp3"></audio>
+    <audio id="clear" src="clear.mp3"></audio>
+    <audio id="gong" src="gong.mp3"></audio>
+  </a-assets>
+  <!-- そら -->
+  <a-sky color="#333333"></a-sky>
+</a-scene>
+
+<script>
+// アイテムのゲット処理
+const item = { ball: 0, stone: 0, key: 0 }; // アイテムをゲットしたか否かの変数
+// ボール
+const ball = document.getElementById("ball");         // ボールを取得
+ball.addEventListener("click", (e) => {               // クリックされたら
+  item.ball = 1;                                      // ボールをゲット
+  ball.setAttribute("position", "13 1 -13");          // 場所をドアの前に
+  ball.setAttribute("scale", "0.5 0.5 0.5");          // 大きさを小さく
+  document.getElementById("get").play();              // ゲット音を鳴らす
+});
+// ストーン
+const stone = document.getElementById("stone");       // ストーンを取得
+stone.addEventListener("click", (e) => {              // クリックされたら
+  item.stone = 1;                                     // ストーンをゲット
+  stone.setAttribute("position", "13 1 -12");         // 場所をドアの前に
+  stone.setAttribute("scale", "0.5 0.5 0.5");         // 大きさを小さく
+  document.getElementById("get").play();              // ゲット音を鳴らす
+});
+// キー
+const key = document.getElementById("key");           // キーを取得
+key.addEventListener("click", (e) => {                // クリックされたら
+  item.key = 1;                                       // キーをゲット
+  key.setAttribute("position", "13 1 -11");           // 場所をドアの前に
+  key.setAttribute("scale", "0.5 0.5 0.5");           // 大きさを小さく
+  document.getElementById("get").play();              // ゲット音を鳴らす
+});
+
+// ゲーム開始
+const scene = document.querySelector("a-scene");      // シーンの取得
+scene.addEventListener("enter-vr", () => {            // VRモードに入ったら
+  // タイマーによる状態の取得と表示、クリア・失敗判定
+  let limitTime = 1200;                               // 制限時間
+  const timer = setInterval( () => {                  // タイマー開始
+    // ゲットしたアイテムの表示
+    const txtItem = document.getElementById("txtItem"); // a-text を取得
+    str = item.ball + "-" + item.stone + "-" + item.key;  // 表示文字列を作成
+    txtItem.setAttribute("value", str);               // 表示
+    // アイテムをすべて揃えたらドアを開ける
+    const itemNum = item.ball + item.stone + item.key;  // ゲットしたアイテム数
+    if (itemNum == 3) {                               // アイテム数が3なら
+      const door = document.getElementById("door");   // ドアを取得
+      door.setAttribute("rotation", "0 0 90");        // ドアを開ける
+      door.setAttribute("position", "17.5 -0.5 -12");
+    }
+    // ドアの外に出たらクリア
+    const player = document.getElementById("player"); // プレイヤーを取得
+    const curPos = player.getAttribute("position");   // プレイヤーの位置を取得
+    if (curPos.x >= 15) {                             // 外に出ていたら
+      clearInterval(timer);                           // タイマー停止
+      document.getElementById("clear").play();        // クリア音を鳴らす
+    }
+    // 失敗（制限時間オーバー）
+    limitTime--;                                      // 制限時間を減らす
+    const txtTime = document.getElementById("txtTime"); // a-text を取得
+    txtTime.setAttribute("value", limitTime);         // 残り時間を表示
+    if (limitTime == 0) {                             // 時間が0なら
+      clearInterval(timer);                           // タイマー停止
+      document.getElementById("gong").play();         // 失敗音を鳴らす
+    }
+  }, 100);                                    // 以上を100msごと繰り返す
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>物理シミュレーションとパーティクル</title>
+  <script src="aframe.min.js"></script>
+  <script src="aframe-physics-system.min.js"></script>
+  <script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.min.js"></script>
+  </head>
+<body>
+<a-scene physics="debug: true">
+  <!-- 床（static-body） -->
+  <a-plane static-body
+    position="0 0 -4"
+    rotation="-90 0 0"
+    width="4"
+    height="4"
+    color="#7BC8A4">
+  </a-plane>
+  <!-- 箱（static-body） -->
+  <a-box static-body
+    position="-0.3 0.5 -4"
+    color="#4CC3D9">
+  </a-box>
+  <!-- 球（dynamic-body） -->
+  <a-sphere id="sphere" dynamic-body
+    position="0.5 5 -4"
+    radius="0.5"
+    color="#EF2D5E">
+  </a-sphere>
+  <a-sky color="#333333"></a-sky>
+</a-scene>
+
+<script>
+// 衝突時にパーティクルを生成する
+const sphere = document.getElementById("sphere"); // a-sphere を取得
+sphere.addEventListener("collide", (e) => {       // sphere が衝突したら
+  // console.log(e.detail.body.el);    // 衝突相手
+  // console.log(e.detail.target.el);  // 自身
+  const pos = sphere.getAttribute("position");    // sphere の位置を取得
+  const ptc = document.createElement("a-entity"); // パーティクルを生成
+  ptc.setAttribute("position", pos);              // パーティクルの位置を設定
+  ptc.setAttribute("particle-system",             // パーティクルの諸設定
+    "size: 0.3; duration: 0.1; particleCount: 20; velocityValue: 1 5 1");
+  const scene = document.querySelector("a-scene");  // シーンを取得
+  scene.appendChild(ptc);                         // シーンにパーティクルを追加
+});
+
+</script>
+</body>
+</html>
