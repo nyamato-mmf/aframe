@@ -15,10 +15,23 @@
 
 
     <!-- 立方体 -->
-    <a-box width="1.2" height="1.5" depth="2" position="-3 2 -6" rotation="0 45 0" src="#london-texture"></a-box>
+    <a-box width="1.2" height="1.5" depth="2" position="-3 2 -6" rotation="0 45 0" src="#london-texture" animation="property: position;
+      from: -3 -1.5 -6;
+      to: -3 4.5 -6;
+      dir: alternate;
+      loop: true;
+      dur: 2000;
+      easing: easeInOutQuad;">
+
+    </a-box>
 
     <!-- 球体 -->
-    <a-sphere position="0 1.25 -5" radius="1.25" src="#globe-texture"></a-sphere>
+    <a-sphere position="0 1.25 -5" radius="1.25" src="#globe-texture" animation="property: rotation;
+        to: 0 360 0;
+        loop: true;
+        dur: 30000;
+        easing:linear;">
+    </a-sphere>
 
     <!-- 円柱 -->
     <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" src="#tokyo-texture"></a-cylinder>
