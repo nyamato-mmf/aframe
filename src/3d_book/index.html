@@ -8,24 +8,36 @@
 </head>
 
 <body>
-  <a-scene vr-mode-ui="enabled: false" inspector="" keyboard-shortcuts="" screenshot="" xr-mode-ui="" device-orientation-permission-ui="">
+	<a-scene vr-mode-ui="enabled: false" inspector="" keyboard-shortcuts="" screenshot="" xr-mode-ui="" device-orientation-permission-ui="">
 
-  <!-- モデル -->
-  <a-gltf-model id="island" src="./models/island.glb" position="0 3 -2" scale="3 3 3" gltf-model="./models/island.glb"></a-gltf-model>
+	<!-- モデル（島） -->
+	<a-gltf-model id="island" src="./models/island.glb" position="0 0 -2" scale="9 9 9" gltf-model="./models/island.glb"></a-gltf-model>
 
-      <!-- モデル -->
-      <a-gltf-model id="girl" src="./models/character.glb" position="0 4.5 -2" scale="0.2 0.2 0.2"></a-gltf-model>
+	<!-- モデル（女の子） -->
+	<a-gltf-model id="girl" src="./models/character.glb" position="0 4.5 -2" scale="0.2 0.2 0.2" 
+	animation__enter="property: position;
+	startEvents:click;
+	from: 0 4.5 -2;
+	to: 3 4.5 2;
+	dir: alternate;
+	loop: true;
+	dur:10000;
+	easing: easeInOutQuad;"></a-gltf-model>
 
-  <a-camera position="0 5 0" camera="" rotation="" look-controls="" wasd-controls="" data-aframe-inspector-original-camera="">
-    <a-cursor material="" raycaster="" cursor="" geometry=""></a-cursor>
-  </a-camera>
+	<!-- 背景（空） -->
+    <a-sky color="lightblue"></a-sky>
 
-  <!--           
-  <a-entity light="color: #BBB; type: ambient" data-aframe-default-light="" aframe-injected=""></a-entity>
-  <a-entity light="intensity: 0.6; castShadow: true" position="-0.5 1 1" data-aframe-default-light="" aframe-injected=""></a-entity>
-  <a-entity light="color: #BBB; type: ambient" data-aframe-default-light="" aframe-injected=""></a-entity>
-  <a-entity light="intensity: 0.6; castShadow: true" position="-0.5 1 1" data-aframe-default-light="" aframe-injected=""></a-entity>
-  -->   
+	<!-- カメラ -->
+	<a-camera position="0 5 0" camera="" rotation="" look-controls="" wasd-controls="" data-aframe-inspector-original-camera="">
+		<a-cursor material="" raycaster="" cursor="" geometry=""></a-cursor>
+	</a-camera>
+
+	<!--           
+	<a-entity light="color: #BBB; type: ambient" data-aframe-default-light="" aframe-injected=""></a-entity>
+	<a-entity light="intensity: 0.6; castShadow: true" position="-0.5 1 1" data-aframe-default-light="" aframe-injected=""></a-entity>
+	<a-entity light="color: #BBB; type: ambient" data-aframe-default-light="" aframe-injected=""></a-entity>
+	<a-entity light="intensity: 0.6; castShadow: true" position="-0.5 1 1" data-aframe-default-light="" aframe-injected=""></a-entity>
+	-->   
 
 
 
